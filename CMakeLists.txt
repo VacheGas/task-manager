@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
+#set(CMAKE_INCLUDE_CURRENT_DIR ON)
+#set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
 find_package(Qt6 COMPONENTS
@@ -13,8 +15,22 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-add_executable(untitled1 main.cpp)
-target_link_libraries(untitled1
+set(RESOURCES_PATH ${CMAKE_SOURCE_DIR})
+
+add_executable(todo-list
+        main.cpp
+        src/widget.cpp
+        includes/widget.h
+        src/datamodel.cpp
+        includes/datamodel.h
+        includes/task.h
+        src/delegate.cpp
+        includes/delegate.h
+        src/filter_proxy_model.cpp
+        includes/filter_proxy_model.h
+)
+target_compile_definitions(todo-list PRIVATE RESOURCES_PATH="${RESOURCES_PATH}")
+target_link_libraries(todo-list
         Qt::Core
         Qt::Gui
         Qt::Widgets
