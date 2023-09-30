@@ -26,8 +26,6 @@ add_executable(todo-list
         includes/task.h
         src/delegate.cpp
         includes/delegate.h
-        src/filter_proxy_model.cpp
-        includes/filter_proxy_model.h
 )
 target_compile_definitions(todo-list PRIVATE RESOURCES_PATH="${RESOURCES_PATH}")
 target_link_libraries(todo-list

@@ -127,7 +127,7 @@ bool DataModel::removeRows(int position, int rows, const QModelIndex &index) {
 
 void DataModel::loadData() {
     QList<Task> tasks;
-    QFile file( RESOURCES_PATH "/tasks.json");
+    QFile file(RESOURCES_PATH "/tasks.json");
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QByteArray jsonData = file.readAll();
         QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData);
@@ -143,7 +143,7 @@ void DataModel::loadData() {
 }
 
 void DataModel::saveData() {
-    QFile file("/tasks.json");
+    QFile file(RESOURCES_PATH "/tasks.json");
 
     if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QJsonArray taskArray;

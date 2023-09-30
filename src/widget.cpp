@@ -3,7 +3,6 @@
 //
 
 #include "../includes/widget.h"
-#include <iostream>
 #include <QLabel>
 
 Widget::Widget(QWidget *parent)
@@ -109,7 +108,6 @@ void Widget::textFilterChanged()
     bool isRegularExpression = _filterSyntax->isChecked();
     QString pattern;
     if (isRegularExpression) {
-        std::cout << _filterPattern->text().toStdString() ;
         pattern =QRegularExpression::wildcardToRegularExpression(_filterPattern->text(), QRegularExpression::UnanchoredWildcardConversion);
     } else {
         pattern = QRegularExpression::escape(_filterPattern->text());

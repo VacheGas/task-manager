@@ -18,7 +18,6 @@
 
 #include "delegate.h"
 #include "datamodel.h"
-#include "filter_proxy_model.h"
 
 class Widget : public QWidget
 {

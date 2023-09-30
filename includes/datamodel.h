@@ -8,8 +8,6 @@
 #include <QObject>
 #include <QAbstractItemModel>
 
-#include <vector>
-
 #include "Task.h"
 
 class DataModel : public QAbstractTableModel
