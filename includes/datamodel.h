@@ -8,14 +8,14 @@
 #include <QObject>
 #include <QAbstractItemModel>
 
-#include "Task.h"
+#include "task.h"
 
 class DataModel : public QAbstractTableModel
 {
     Q_OBJECT
 
 private:
-    QList<Task> _data;
+    QList<task> _data;
     enum class ROWS_COUNT {
         COUNT = 4
     };

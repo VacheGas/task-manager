@@ -6,14 +6,14 @@
 #define TODO_LIST_INCLUDES_TASK_H
 #include <QDate>
 
-struct Task {
+struct task {
     QString name;
     QString description;
     QDate date;
     bool state{};
 
-    Task() = default;
-    Task(QString newName,
+    task() = default;
+    task(QString newName,
          QString newDescription,
          QDate  newDate, bool newState)
          : name (std::move(newName)),
