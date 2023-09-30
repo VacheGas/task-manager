@@ -23,5 +23,6 @@ qmake --version
 ### Build
 #### macOS
 ```bash
-
+cmake ..
+make
 ```
