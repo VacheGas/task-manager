@@ -40,6 +40,4 @@ public slots:
 
 };
 
-
-
 #endif //TODO_LIST_INCLUDES_DATAMODEL_H
