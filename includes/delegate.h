@@ -6,16 +6,21 @@
 #define TODO_LIST_INCLUDES_DELEGATE_H
 
 #include <QStyledItemDelegate>
+namespace task_manager {
 
-class delegate : public QStyledItemDelegate {
-Q_OBJECT
+    class delegate : public QStyledItemDelegate {
+    Q_OBJECT
 
-public:
-    explicit delegate(QObject *parent = nullptr);
-    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
-    void setEditorData(QWidget *editor, const QModelIndex &index) const override;
-    void setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const override;
-};
+    public:
+        explicit delegate(QObject *parent = nullptr);
 
+        QWidget *
+        createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
+        void setEditorData(QWidget *editor, const QModelIndex &index) const override;
+
+        void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const override;
+    };
+
+}
 #endif //TODO_LIST_INCLUDES_DELEGATE_H

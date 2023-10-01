@@ -20,47 +20,56 @@
 #include "delegate.h"
 #include "datamodel.h"
 
-class Widget : public QWidget
-{
-Q_OBJECT
+namespace task_manager {
 
-private:
-    QTableView   *_table{};
-    QLineEdit   *_newName{};
-    QLineEdit   *_newDescription{};
-    QDateEdit   *_newDate{};
-    QPushButton *_btnAdd{};
-    QPushButton *_btnDel{};
-    QPushButton *_saveTasks{};
-    QPushButton *_resetButton{};
-    QComboBox   *_filterColumn{};
-    QCheckBox   *_isCaseSensitive{};
-    QLineEdit   *_filterPattern{};
-    QComboBox   *_filterState{};
-    QDateEdit   *_filterDate{};
-    QStackedWidget *_filterLineStack{};
-    DataModel   *_model{};
-    QSortFilterProxyModel *_proxyModel{};
-    delegate *_del{};
+    class Widget : public QWidget {
+    Q_OBJECT
 
-
-public:
-    explicit Widget(QWidget *parent = nullptr);
-
-private:
-    void allocateComponents();
-    void configureComponents();
-    void arrangeLayout();
-
-public slots:
-    void insertValueFromLineEdit();
-    void removeRow();
-    void patternFilterChanged();
-    void resetFilter();
-    void saveTasks();
-    void handleFilterPatternType();
-
-};
+    private:
+        QTableView *_table{};
+        QLineEdit *_newName{};
+        QLineEdit *_newDescription{};
+        QDateEdit *_newDate{};
+        QPushButton *_btnAdd{};
+        QPushButton *_btnDel{};
+        QPushButton *_saveTasks{};
+        QPushButton *_resetButton{};
+        QComboBox *_filterColumn{};
+        QCheckBox *_isCaseSensitive{};
+        QLineEdit *_filterPattern{};
+        QComboBox *_filterState{};
+        QDateEdit *_filterDate{};
+        QStackedWidget *_filterLineStack{};
+        DataModel *_model{};
+        QSortFilterProxyModel *_proxyModel{};
+        delegate *_del{};
 
 
+    public:
+        explicit Widget(QWidget *parent = nullptr);
+
+    private:
+        void allocateComponents();
+
+        void configureComponents();
+
+        void arrangeLayout();
+
+    public slots:
+
+        void insertValueFromLineEdit();
+
+        void removeRow();
+
+        void patternFilterChanged();
+
+        void resetFilter();
+
+        void saveTasks();
+
+        void handleFilterPatternType();
+
+    };
+
+}
 #endif //TODO_LIST_INCLUDES_WIDGET_H
