@@ -1,17 +1,17 @@
 //
 // Created by Vache Gasparyan on 24.09.23.
 //
-
-#include "../includes/delegate.h"
 #include <QDateEdit>
 
+#include "../includes/delegate.h"
+#include "../includes/task_element_arrangement.h"
+
 delegate::delegate(QObject *parent)
-        : QStyledItemDelegate(parent)
-{
+        : QStyledItemDelegate(parent) {
 }
 
 QWidget *delegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const {
-    if (index.column() == 2) {
+    if (static_cast<TaskElementArrangement>(index.column()) == TaskElementArrangement::DATE) {
             QDateEdit* dateEdit = new QDateEdit(parent);
             return dateEdit;
     }
@@ -19,7 +19,7 @@ QWidget *delegate::createEditor(QWidget *parent, const QStyleOptionViewItem &opt
 }
 
 void delegate::setEditorData(QWidget *editor, const QModelIndex &index) const {
-    if (index.column() == 2) {
+    if (static_cast<TaskElementArrangement>(index.column()) == TaskElementArrangement::DATE) {
             QDateEdit* dateEdit = static_cast<QDateEdit*>(editor);
             if (dateEdit) {
                 QDate value = index.model()->data(index, Qt::EditRole).toDate();
@@ -31,7 +31,7 @@ void delegate::setEditorData(QWidget *editor, const QModelIndex &index) const {
 }
 
 void delegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const {
-    if (index.column() == 2) {
+    if (static_cast<TaskElementArrangement>(index.column()) == TaskElementArrangement::DATE) {
         QDateEdit* dateEdit = static_cast<QDateEdit*>(editor);
         model->setData(index, dateEdit->date());
         return;

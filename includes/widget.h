@@ -15,6 +15,7 @@
 #include <QCheckBox>
 #include <QTableView>
 #include <QDateEdit>
+#include <QStackedWidget>
 
 #include "delegate.h"
 #include "datamodel.h"
@@ -24,21 +25,23 @@ class Widget : public QWidget
 Q_OBJECT
 
 private:
-    QTableView   *_table;
-    QLineEdit   *_newName;
-    QLineEdit   *_newDescription;
-    QDateEdit   *_newDate;
-    QPushButton *_btnAdd;
-    QPushButton *_btnDel;
-    QPushButton *_saveTasks;
-    QPushButton *_resetButton;
-    QComboBox   *_filterColumn;
-    QCheckBox   *_filterSyntax;
-    QCheckBox   *_isCaseSensitive;
-    QLineEdit   *_filterPattern;
-    DataModel   *_model;
-    QSortFilterProxyModel *_proxyModel;
-    delegate *_del;
+    QTableView   *_table{};
+    QLineEdit   *_newName{};
+    QLineEdit   *_newDescription{};
+    QDateEdit   *_newDate{};
+    QPushButton *_btnAdd{};
+    QPushButton *_btnDel{};
+    QPushButton *_saveTasks{};
+    QPushButton *_resetButton{};
+    QComboBox   *_filterColumn{};
+    QCheckBox   *_isCaseSensitive{};
+    QLineEdit   *_filterPattern{};
+    QComboBox   *_filterState{};
+    QDateEdit   *_filterDate{};
+    QStackedWidget *_filterLineStack{};
+    DataModel   *_model{};
+    QSortFilterProxyModel *_proxyModel{};
+    delegate *_del{};
 
 
 public:
@@ -52,10 +55,10 @@ private:
 public slots:
     void insertValueFromLineEdit();
     void removeRow();
-    void textFilterChanged();
+    void patternFilterChanged();
     void resetFilter();
     void saveTasks();
-   // void dateFilterChanged();
+    void handleFilterPatternType();
 
 };
 

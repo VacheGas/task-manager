@@ -2,19 +2,20 @@
 // Created by Vache Gasparyan on 22.09.23.
 //
 
-#include "../includes/datamodel.h"
-
 #include <QFile>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
+
+#include "../includes/datamodel.h"
+#include "../includes/task_element_arrangement.h"
 
 DataModel::DataModel(QObject *parent) : QAbstractTableModel(parent) {
     loadData();
 }
 
 int DataModel::columnCount(const QModelIndex &) const {
-    return static_cast<int>(ROWS_COUNT::COUNT);
+    return static_cast<int>(RowsCount::COUNT);
 }
 
 int DataModel::rowCount(const QModelIndex &) const {
@@ -23,14 +24,14 @@ int DataModel::rowCount(const QModelIndex &) const {
 
 QVariant DataModel::data(const QModelIndex &index, int role) const {
     if( role != Qt::DisplayRole ) return QVariant();
-        switch (index.column()) {
-            case 0:
+        switch (static_cast<TaskElementArrangement>(index.column())) {
+            case TaskElementArrangement::NAME:
                 return QVariant(_data[index.row()].name);
-            case 1:
+            case TaskElementArrangement::DESCRIPTION:
                 return QVariant(_data[index.row()].description);
-            case 2:
+            case TaskElementArrangement::DATE:
                 return QVariant(_data[index.row()].date);
-            case 3:
+            case TaskElementArrangement::STATE:
                 return QVariant((_data[index.row()].state ? "Completed" : "In Progress"));
             default:
                 return QVariant();
@@ -38,14 +39,14 @@ QVariant DataModel::data(const QModelIndex &index, int role) const {
 }
 
 QModelIndex DataModel::index(int row, int column, const QModelIndex &) const {
-    switch (column) {
-        case 0:
+    switch (static_cast<TaskElementArrangement>(column)) {
+        case TaskElementArrangement::NAME:
             return createIndex(row, column, (void *) &_data[row].name);
-        case 1:
+        case TaskElementArrangement::DESCRIPTION:
             return createIndex(row, column, (void *) &_data[row].description);
-        case 2:
+        case TaskElementArrangement::DATE:
             return createIndex(row, column, (void *) &_data[row].date);
-        case 3:
+        case TaskElementArrangement::STATE:
             return createIndex(row, column, (void *) &_data[row].state);
     }
     return createIndex(row, column, nullptr);
@@ -53,14 +54,14 @@ QModelIndex DataModel::index(int row, int column, const QModelIndex &) const {
 
 QVariant DataModel::headerData(int section, Qt::Orientation orientation, int role) const  {
     if (role == Qt::DisplayRole && orientation == Qt::Horizontal) {
-        switch (section) {
-            case 0:
+        switch (static_cast<TaskElementArrangement>(section)) {
+            case TaskElementArrangement::NAME:
                 return "Name";
-            case 1:
+            case TaskElementArrangement::DESCRIPTION:
                 return "Description";
-            case 2:
+            case TaskElementArrangement::DATE:
                 return "Date";
-            case 3:
+            case TaskElementArrangement::STATE:
                 return "State";
             default:
                 return QVariant();
@@ -78,23 +79,23 @@ bool DataModel::setData(const QModelIndex &index, const QVariant &value, int rol
     if (role != Qt::EditRole) {
         return true;
     }
-    switch (index.column()) {
-        case 0:
+    switch (static_cast<TaskElementArrangement>(index.column())) {
+        case TaskElementArrangement::NAME:
             if (_data[index.row()].name != value.toString()) {
                 _data[index.row()].name = value.toString();
                 break;
             }
-        case 1:
+        case TaskElementArrangement::DESCRIPTION:
             if (_data[index.row()].description != value.toString()) {
                 _data[index.row()].description = value.toString();
                 break;
             }
-        case 2:
+        case TaskElementArrangement::DATE:
             if (_data[index.row()].date != value.toDate()) {
                 _data[index.row()].date = value.toDate();
                 break;
             }
-        case 3:
+        case TaskElementArrangement::STATE:
             if (_data[index.row()].state != value.toBool()) {
                 _data[index.row()].state= value.toBool();
                 break;
@@ -116,9 +117,8 @@ void DataModel::addValue(const QString &name, const QString &description, const 
 bool DataModel::removeRows(int position, int rows, const QModelIndex &index) {
     Q_UNUSED(index);
     Q_UNUSED(rows);
-
     beginRemoveRows(QModelIndex(), position, position);
-    for (int row = 0; row < position; ++row) {
+    for (int row = 0; row <= position; ++row) {
         _data.removeAt(row);
     }
     endRemoveRows();
@@ -137,7 +137,6 @@ void DataModel::loadData() {
             QJsonObject taskObject = taskValue.toObject();
             addValue( taskObject["Name"].toString(), taskObject["Description"].toString(),  taskObject["Date"].toVariant().toDate(), taskObject["State"].toBool());
         }
-
         file.close();
     }
 }
@@ -151,7 +150,7 @@ void DataModel::saveData() {
             QJsonObject taskObject;
             taskObject["Name"] = task.name;
             taskObject["Description"] = task.description;
-            taskObject["Date"] = task.date.toString();
+            taskObject["Date"] = task.date.toString(Qt::ISODate);
             taskObject["State"] = task.state;
             taskArray.append(taskObject);
         }

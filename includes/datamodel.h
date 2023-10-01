@@ -16,7 +16,7 @@ class DataModel : public QAbstractTableModel
 
 private:
     QList<task> _data;
-    enum class ROWS_COUNT {
+    enum class RowsCount {
         COUNT = 4
     };
 

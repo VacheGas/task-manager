@@ -23,6 +23,7 @@ add_executable(todo-list
         includes/task.h
         src/delegate.cpp
         includes/delegate.h
+        includes/task_element_arrangement.h
 )
 target_compile_definitions(todo-list PRIVATE RESOURCES_PATH="${RESOURCES_PATH}")
 target_link_libraries(todo-list
