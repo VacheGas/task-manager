@@ -3,8 +3,8 @@
 //
 #include <QLabel>
 
-#include "../includes/widget.h"
-#include "../includes/task_element_arrangement.h"
+#include <headers.h>
+#include <widget.h>
 
 namespace task_manager {
 
@@ -13,15 +13,9 @@ namespace task_manager {
         allocateComponents();
         configureComponents();
         arrangeLayout();
+        setupConnections();
 
-        connect(_filterColumn, &QComboBox::activated, this, &Widget::handleFilterPatternType);
-        connect(_btnAdd, &QPushButton::clicked, this, &Widget::insertValueFromLineEdit);
-        connect(_btnDel, &QPushButton::clicked, this, &Widget::removeRow);
-        connect(_resetButton, &QPushButton::clicked, this, &Widget::resetFilter);
-        connect(_filterPattern, &QLineEdit::textChanged, this, &Widget::patternFilterChanged);
-        connect(_filterDate, &QDateEdit::dateChanged, this, &Widget::patternFilterChanged);
-        connect(_filterState, &QComboBox::activated, this, &Widget::patternFilterChanged);
-        connect(_saveTasks, &QPushButton::clicked, this, &Widget::saveTasks);
+        setFixedSize(490, 400);
     }
 
     void Widget::allocateComponents() {
@@ -37,26 +31,32 @@ namespace task_manager {
         _saveTasks = new QPushButton("save", this);
         _resetButton = new QPushButton("Reset", this);
         _filterColumn = new QComboBox(this);
-        _isCaseSensitive = new QCheckBox("Case Insensitive", this);
-        _filterPattern = new QLineEdit("", this);
+        isCaseInsensitive = new QCheckBox("Case Insensitive", this);
+        _filterNameDesc = new QLineEdit("", this);
         _filterDate = new QDateEdit(QDate(), this);
         _filterState = new QComboBox(this);
         _filterLineStack = new QStackedWidget;
+
     }
 
     void Widget::configureComponents() {
+        _btnAdd->setEnabled(false);
         _proxyModel->setSourceModel(_model);
         _table->setModel(_proxyModel);
         _table->setItemDelegate(_del);
 
-        _newName->setPlaceholderText(QString("Name"));
-        _newDescription->setPlaceholderText(QString("Description"));
-        _filterPattern->setPlaceholderText(QString("Filter Pattern"));
+        _newName->setPlaceholderText(QString(header(TaskElementArrangement::NAME)));
+        _newDescription->setPlaceholderText(QString(header(TaskElementArrangement::DESCRIPTION)));
+        _filterNameDesc->setPlaceholderText(QString("Filter Pattern"));
 
-        _filterColumn->addItem("Name");
-        _filterColumn->addItem("Description");
-        _filterColumn->addItem("Date");
-        _filterColumn->addItem("State");
+        _filterColumn->addItem(header(TaskElementArrangement::NAME));
+        _filterColumn->addItem(header(TaskElementArrangement::DESCRIPTION));
+        _filterColumn->addItem(header(TaskElementArrangement::DATE));
+        _filterColumn->addItem(header(TaskElementArrangement::STATE));
+        _filterColumn->setItemData(static_cast<int>(TaskElementArrangement::NAME), header(TaskElementArrangement::NAME), Qt::UserRole);
+        _filterColumn->setItemData(static_cast<int>(TaskElementArrangement::DESCRIPTION), header(TaskElementArrangement::DESCRIPTION), Qt::UserRole);
+        _filterColumn->setItemData(static_cast<int>(TaskElementArrangement::DATE), header(TaskElementArrangement::DATE), Qt::UserRole);
+        _filterColumn->setItemData(static_cast<int>(TaskElementArrangement::STATE), header(TaskElementArrangement::STATE), Qt::UserRole);
 
         _filterState->addItem("Completed");
         _filterState->addItem("In Progress");
@@ -65,11 +65,11 @@ namespace task_manager {
     void Widget::arrangeLayout() {
         QHBoxLayout *filterSettingsLayout = new QHBoxLayout;
         filterSettingsLayout->addWidget(_filterColumn);
-        filterSettingsLayout->addWidget(_isCaseSensitive);
+        filterSettingsLayout->addWidget(isCaseInsensitive);
         filterSettingsLayout->setSpacing(8);
 
         QHBoxLayout *filterSecondLay = new QHBoxLayout;
-        _filterLineStack->addWidget(_filterPattern);
+        _filterLineStack->addWidget(_filterNameDesc);
         _filterLineStack->addWidget(_filterDate);
         _filterLineStack->addWidget(_filterState);
         filterSecondLay->addWidget(_filterLineStack);
@@ -100,7 +100,20 @@ namespace task_manager {
         setLayout(mainLayout);
     }
 
-    void Widget::insertValueFromLineEdit() {
+    void Widget::setupConnections() {
+        connect(_filterColumn, &QComboBox::activated, this, &Widget::handleFilterPatternType);
+        connect(_btnAdd, &QPushButton::clicked, this, &Widget::insertTask);
+        connect(_btnDel, &QPushButton::clicked, this, &Widget::removeRow);
+        connect(_resetButton, &QPushButton::clicked, this, &Widget::resetFilter);
+        connect(_filterNameDesc, &QLineEdit::textChanged, this, &Widget::patternFilterChanged);
+        connect(_filterDate, &QDateEdit::dateChanged, this, &Widget::patternFilterChanged);
+        connect(_filterState, &QComboBox::activated, this, &Widget::patternFilterChanged);
+        connect(_saveTasks, &QPushButton::clicked, this, &Widget::saveTasks);
+        connect(_newName, &QLineEdit::textChanged, this, &Widget::enableAddButton);
+        connect(_newDescription, &QLineEdit::textChanged, this, &Widget::enableAddButton);
+    }
+
+    void Widget::insertTask() {
         _model->addValue(_newName->text(), _newDescription->text(), _newDate->date(), 0);
     }
 
@@ -132,7 +145,7 @@ namespace task_manager {
         }
         _proxyModel->setFilterKeyColumn(_filterColumn->currentIndex());
         QRegularExpression::PatternOptions options = QRegularExpression::NoPatternOption;
-        if (_isCaseSensitive->isChecked()) {
+        if (isCaseInsensitive->isChecked()) {
             options |= QRegularExpression::CaseInsensitiveOption;
         }
         QRegularExpression regularExpression(pattern, options);
@@ -158,4 +171,7 @@ namespace task_manager {
         }
     }
 
-}
+    void Widget::enableAddButton() {
+        _btnAdd->setEnabled(!_newName->text().isEmpty() && !_newDescription->text().isEmpty());
+    }
+};

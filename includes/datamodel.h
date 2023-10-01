@@ -9,21 +9,31 @@
 #include <QAbstractItemModel>
 
 #include "task.h"
-namespace task_manager {
 
+namespace task_manager {
+    /**
+     * @brief The DataModel class represents a custom data model for task management.
+     *
+     * This class inherits QAbstractTableModel and provides methods to manage tasks.
+     */
     class DataModel : public QAbstractTableModel {
     Q_OBJECT
 
     private:
-        QList<task> _data;
+        QList<task> _data; /**< List to store task objects. */
         enum class RowsCount {
             COUNT = 4
         };
 
     public:
+        /**
+         * @brief Constructor for the DataModel class.
+         * @param parent The parent QObject.
+         */
         explicit DataModel(QObject *parent);
 
     public:
+        // Overridden methods from QAbstractTableModel
         int columnCount(const QModelIndex &parent) const override;
 
         int rowCount(const QModelIndex &parent) const override;
@@ -40,12 +50,26 @@ namespace task_manager {
 
         bool removeRows(int position, int rows, const QModelIndex &index) override;
 
+        /**
+         * @brief Loads data from a JSON file into the model.
+         */
         void loadData();
 
+        /**
+         * @brief Saves the current data in the model to a JSON file.
+         */
         void saveData();
 
-    public slots:
+        bool isEmpty();
 
+    public slots:
+        /**
+         * @brief Adds a new task to the model.
+         * @param name The name of the task.
+         * @param description The description of the task.
+         * @param date The date of the task.
+         * @param state The state of the task.
+         */
         void addValue(const QString &name, const QString &description, const QDate &date, const bool &state);
 
     };

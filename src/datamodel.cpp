@@ -7,8 +7,8 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-#include "../includes/datamodel.h"
-#include "../includes/task_element_arrangement.h"
+#include <datamodel.h>
+#include <headers.h>
 
 namespace task_manager {
 
@@ -25,19 +25,21 @@ namespace task_manager {
     }
 
     QVariant DataModel::data(const QModelIndex &index, int role) const {
-        if (role != Qt::DisplayRole) return QVariant();
-        switch (static_cast<TaskElementArrangement>(index.column())) {
-            case TaskElementArrangement::NAME:
-                return QVariant(_data[index.row()].name);
-            case TaskElementArrangement::DESCRIPTION:
-                return QVariant(_data[index.row()].description);
-            case TaskElementArrangement::DATE:
-                return QVariant(_data[index.row()].date);
-            case TaskElementArrangement::STATE:
-                return QVariant((_data[index.row()].state ? "Completed" : "In Progress"));
-            default:
-                return QVariant();
+        if(role == Qt::DisplayRole || role == Qt::EditRole) {
+            switch (static_cast<TaskElementArrangement>(index.column())) {
+                case TaskElementArrangement::NAME:
+                    return QVariant(_data[index.row()].name);
+                case TaskElementArrangement::DESCRIPTION:
+                    return QVariant(_data[index.row()].description);
+                case TaskElementArrangement::DATE:
+                    return QVariant(_data[index.row()].date);
+                case TaskElementArrangement::STATE:
+                    return QVariant((_data[index.row()].state ? "Completed" : "In Progress"));
+                default:
+                    return QVariant();
+            }
         }
+        return QVariant();
     }
 
     QModelIndex DataModel::index(int row, int column, const QModelIndex &) const {
@@ -56,18 +58,7 @@ namespace task_manager {
 
     QVariant DataModel::headerData(int section, Qt::Orientation orientation, int role) const {
         if (role == Qt::DisplayRole && orientation == Qt::Horizontal) {
-            switch (static_cast<TaskElementArrangement>(section)) {
-                case TaskElementArrangement::NAME:
-                    return "Name";
-                case TaskElementArrangement::DESCRIPTION:
-                    return "Description";
-                case TaskElementArrangement::DATE:
-                    return "Date";
-                case TaskElementArrangement::STATE:
-                    return "State";
-                default:
-                    return QVariant();
-            }
+            return task_manager::header(static_cast<TaskElementArrangement>(section));
         }
         return QVariant();
     }
@@ -79,29 +70,34 @@ namespace task_manager {
 
     bool DataModel::setData(const QModelIndex &index, const QVariant &value, int role) {
         if (role != Qt::EditRole) {
-            return true;
+            return false;
         }
         switch (static_cast<TaskElementArrangement>(index.column())) {
-            case TaskElementArrangement::NAME:
+            case TaskElementArrangement::NAME: {
                 if (_data[index.row()].name != value.toString()) {
                     _data[index.row()].name = value.toString();
-                    break;
                 }
-            case TaskElementArrangement::DESCRIPTION:
+                break;
+            }
+            case TaskElementArrangement::DESCRIPTION: {
                 if (_data[index.row()].description != value.toString()) {
                     _data[index.row()].description = value.toString();
-                    break;
                 }
-            case TaskElementArrangement::DATE:
+                break;
+            }
+            case TaskElementArrangement::DATE: {
                 if (_data[index.row()].date != value.toDate()) {
                     _data[index.row()].date = value.toDate();
-                    break;
                 }
-            case TaskElementArrangement::STATE:
+                break;
+            }
+            case TaskElementArrangement::STATE: {
                 if (_data[index.row()].state != value.toBool()) {
+
                     _data[index.row()].state = value.toBool();
-                    break;
                 }
+                break;
+            }
             default:
                 return false;
         }
@@ -119,10 +115,9 @@ namespace task_manager {
     bool DataModel::removeRows(int position, int rows, const QModelIndex &index) {
         Q_UNUSED(index);
         Q_UNUSED(rows);
+
         beginRemoveRows(QModelIndex(), position, position);
-        for (int row = 0; row <= position; ++row) {
-            _data.removeAt(row);
-        }
+        _data.removeAt(position);
         endRemoveRows();
         return true;
     }
@@ -137,8 +132,8 @@ namespace task_manager {
 
             for (const QJsonValue &taskValue: taskArray) {
                 QJsonObject taskObject = taskValue.toObject();
-                addValue(taskObject["Name"].toString(), taskObject["Description"].toString(),
-                         taskObject["Date"].toVariant().toDate(), taskObject["State"].toBool());
+                addValue(taskObject[task_manager::header(static_cast<TaskElementArrangement>(0))].toString(), taskObject[task_manager::header(static_cast<TaskElementArrangement>(1))].toString(),
+                         taskObject[task_manager::header(static_cast<TaskElementArrangement>(2))].toVariant().toDate(), taskObject[task_manager::header(static_cast<TaskElementArrangement>(3))].toBool());
             }
             file.close();
         }
@@ -151,10 +146,10 @@ namespace task_manager {
             QJsonArray taskArray;
             for (const task &task: _data) {
                 QJsonObject taskObject;
-                taskObject["Name"] = task.name;
-                taskObject["Description"] = task.description;
-                taskObject["Date"] = task.date.toString(Qt::ISODate);
-                taskObject["State"] = task.state;
+                taskObject[task_manager::header(static_cast<TaskElementArrangement>(0))] = task.name;
+                taskObject[task_manager::header(static_cast<TaskElementArrangement>(1))] = task.description;
+                taskObject[task_manager::header(static_cast<TaskElementArrangement>(2))] = task.date.toString(Qt::ISODate);
+                taskObject[task_manager::header(static_cast<TaskElementArrangement>(3))] = task.state;
                 taskArray.append(taskObject);
             }
             QJsonDocument jsonDoc(taskArray);

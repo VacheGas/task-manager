@@ -13,6 +13,7 @@ find_package(Qt6 COMPONENTS
         REQUIRED)
 
 set(RESOURCES_PATH ${CMAKE_SOURCE_DIR})
+include_directories(${CMAKE_SOURCE_DIR}/includes)
 
 add_executable(todo-list
         main.cpp
@@ -24,6 +25,8 @@ add_executable(todo-list
         src/delegate.cpp
         includes/delegate.h
         includes/task_element_arrangement.h
+        src/headers.cpp
+        includes/headers.h
 )
 target_compile_definitions(todo-list PRIVATE RESOURCES_PATH="${RESOURCES_PATH}")
 target_link_libraries(todo-list
